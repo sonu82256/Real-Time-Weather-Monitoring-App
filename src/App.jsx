@@ -4,7 +4,7 @@ import WeatherMonitor from './components/WeatherMonitor';
 
 const App = () => {
     return (
-        <div>
+        <div className='bg-slate-100'>
             <WeatherMonitor />
             {/* <h1>Weather Monitoring Dashboard</h1> */}
             {/* Only render HistoricalTrends once */}

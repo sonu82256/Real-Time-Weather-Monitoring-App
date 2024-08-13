@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getWeatherData } from '../api/weather';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import WeatherSummary from './WeatherSummary';
+import WeatherCard from './WeatherCard'; // Import the new WeatherCard component
 import Alert from './Alert';
 import HistoricalTrends from './HistoricalTrends';
 
@@ -60,12 +60,26 @@ const WeatherMonitor = () => {
     };
 
     return (
-        <div>
-            <h1>Real-Time Weather Monitoring</h1>
-            <WeatherSummary weatherData={weatherData} />
+        <div className="p-6  max-h-screen">
+            <h1 className="text-4xl font-bold mb-6 text-center text-blue-600 " >Real-Time Weather Monitoring</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  w-4/5 mx-auto" >
+                {weatherData.map((cityData, index) => (
+                    <WeatherCard 
+                        key={index}
+                        cityData={{
+                            city: cities[index],
+                            temp: cityData.main.temp,
+                            maxTemp: cityData.main.temp_max,
+                            minTemp: cityData.main.temp_min,
+                            dominantCondition: cityData.weather[0].main,
+                        }}
+                    />
+                ))}
+            </div>
             {alerts.length > 0 && <Alert alerts={alerts} />}
-            {/* Only render HistoricalTrends once */}
-            <HistoricalTrends />
+            <div className="mt-6">
+                <HistoricalTrends />
+            </div>
         </div>
     );
 };

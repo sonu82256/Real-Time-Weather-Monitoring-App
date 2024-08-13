@@ -1,7 +1,7 @@
 import React, { useEffect, useState, memo } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
-import WeatherChart from './WeatherChart';
+import TrendCard from './TrendCard';
 
 const HistoricalTrends = memo(() => {
     const [trends, setTrends] = useState({});
@@ -85,19 +85,18 @@ const HistoricalTrends = memo(() => {
     }, []); // Ensure useEffect only runs once when the component mounts
 
     return (
-        <div>
-            <h1>Weather Monitoring Dashboard</h1>
-            <h2>Historical Trends</h2>
-            {cities.map(city => (
-                <div key={city}>
-                    <h3>{city}</h3>
-                    {trends[city] && Object.keys(trends[city]).length > 0 ? (
-                        <WeatherChart trends={trends[city]} city={city} />
-                    ) : (
-                        <p>No data available for {city}</p>
-                    )}
-                </div>
-            ))}
+        <div className="p-6  max-h-screen ">
+            <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">Weather Monitoring Dashboard</h1>
+            <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800 bg">Historical Trends</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6  ">
+                {cities.map(city => (
+                    <TrendCard
+                        key={city}
+                        city={city}
+                        trends={trends[city] || {}}
+                    />
+                ))}
+            </div>
         </div>
     );
 });
