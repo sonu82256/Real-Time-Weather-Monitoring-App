@@ -5,8 +5,8 @@ import WeatherChart from './WeatherChart';
 
 const HistoricalTrends = memo(() => {
     const [trends, setTrends] = useState({});
-    // const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
-    const cities = ['Bangalore', 'Kolkata'];
+    const cities = ['Bangalore', 'Kolkata']; // Add or remove cities as needed
+
     useEffect(() => {
         const fetchTrends = async () => {
             const cityTrends = {};
@@ -24,32 +24,45 @@ const HistoricalTrends = memo(() => {
 
                     // Aggregate data by day
                     const dailyStats = data.reduce((acc, curr) => {
-                        const { date, maxTemp, minTemp, avgTemp, temp } = curr;
+                        const { date, maxTemp, minTemp, temp } = curr;
 
                         // Ensure all temperature fields are valid
                         if (
                             maxTemp === undefined || maxTemp === null || isNaN(Number(maxTemp)) ||
                             minTemp === undefined || minTemp === null || isNaN(Number(minTemp)) ||
-                            avgTemp === undefined || avgTemp === null || isNaN(Number(avgTemp)) ||
-                            temp === undefined || temp === null || isNaN(Number(temp)) 
+                            temp === undefined || temp === null || isNaN(Number(temp))
                         ) {
                             console.warn(`Invalid or missing temperature values for date ${date}`);
                             return acc; // Skip this entry
                         }
 
-                        // Check if this date already exists in the accumulator
+                        // Initialize date entry if it does not exist
                         if (!acc[date]) {
                             acc[date] = {
+                                totalTemp: 0,
+                                count: 0,
                                 maxTemp: maxTemp,
-                                minTemp: minTemp,
-                                avgTemp: avgTemp,
-                                temp: temp
+                                minTemp: minTemp
                             };
                         }
 
+                        // Aggregate temperature data
+                        acc[date].totalTemp += temp;
+                        acc[date].count += 1;
+                        acc[date].maxTemp = Math.max(acc[date].maxTemp, maxTemp);
+                        acc[date].minTemp = Math.min(acc[date].minTemp, minTemp);
+
                         return acc;
                     }, {});
-                    
+
+                    // Calculate average temperature for each date
+                    for (const date in dailyStats) {
+                        const stats = dailyStats[date];
+                        stats.avgTemp = stats.totalTemp / stats.count;
+                        delete stats.totalTemp; // Remove totalTemp from final stats
+                        delete stats.count; // Remove count from final stats
+                    }
+
                     // Only add unique data to cityTrends
                     if (!cityTrends[city]) {
                         cityTrends[city] = dailyStats;

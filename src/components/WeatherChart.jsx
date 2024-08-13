@@ -28,7 +28,7 @@ const WeatherChart = ({ trends, city }) => {
         labels: dates,
         datasets: [
             {
-                label: `Max Temperature in ${city}`,
+                label: `Avg Temperature in ${city}`,
                 data: dates.map(date => trends[date].maxTemp),
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 2,
@@ -42,7 +42,7 @@ const WeatherChart = ({ trends, city }) => {
                 fill: false,
             },
             {
-                label: `Avg Temperature in ${city}`,
+                label: `temp in ${city}`,
                 data: dates.map(date => trends[date].avgTemp),
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,
