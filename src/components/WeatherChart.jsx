@@ -23,18 +23,32 @@ ChartJS.register(
 );
 
 const WeatherChart = ({ trends, city }) => {
-    // Prepare the data for the chart
+    const dates = Object.keys(trends);
+    console.log(trends)
     const data = {
-        labels: trends.map((trend) => trend.date), // Dates on the x-axis
+        labels: dates,
         datasets: [
             {
-                label: `Average Temperature in ${city}`, // Chart label
-                data: trends.map((trend) => trend.avgTemp), // Daily average temperatures
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                label: `Max Temperature in ${city}`,
+                data: dates.map(date => trends[date].maxTemp),
+                borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 2,
-                fill: true, // Fill under the line
+                fill: false,
             },
+            {
+                label: `Min Temperature in ${city}`,
+                data: dates.map(date => trends[date].minTemp),
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                fill: false,
+            },
+            {
+                label: `Avg Temperature in ${city}`,
+                data: dates.map(date => trends[date].avgTemp),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+            }
         ],
     };
 
@@ -46,23 +60,15 @@ const WeatherChart = ({ trends, city }) => {
             },
             title: {
                 display: true,
-                text: `Daily Average Temperature in ${city}`,
+                text: `Weather Trends in ${city}`,
             },
         },
         scales: {
             x: {
-                type: 'category', // Ensure that the x-axis is categorical
-                title: {
-                    display: true,
-                    text: 'Date', // X-axis label
-                },
+                type: 'category', // Ensures that the x-axis is categorical
             },
             y: {
-                beginAtZero: false, // Adjust based on your data
-                title: {
-                    display: true,
-                    text: 'Average Temperature (°C)', // Y-axis label
-                },
+                beginAtZero: true, // Adjust based on your data
             },
         },
     };

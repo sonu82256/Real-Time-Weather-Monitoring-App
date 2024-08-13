@@ -20,12 +20,48 @@ const HistoricalTrends = () => {
                     );
 
                     const snapshot = await getDocs(q);
-                    const summaries = snapshot.docs.map(doc => doc.data());
+                    const data = snapshot.docs.map(doc => doc.data());
+                    console.log(data); // Inspect the data
 
-                    cityTrends[city] = summaries;
+                    // Aggregate data by day
+                    const dailyStats = data.reduce((acc, curr) => {
+                        const { date, temp } = curr;
+                        // Handle missing or invalid temp values
+                        console.log(date, temp)
+                        if (temp === undefined || temp === null || isNaN(Number(temp))) {
+                            console.warn(`Invalid or missing temperature value for date ${date}: ${temp}`);
+                            return acc; // Skip this entry
+                        }
+                        
+
+                        const tempValue = Number(temp);
+
+                        if (!acc[date]) {
+                            acc[date] = {
+                                maxTemp: -Infinity,
+                                minTemp: Infinity,
+                                totalTemp: 0,
+                                count: 0
+                            };
+                        }
+                        const dayStats = acc[date];
+                        dayStats.maxTemp = Math.max(dayStats.maxTemp, tempValue);
+                        dayStats.minTemp = Math.min(dayStats.minTemp, tempValue);
+                        dayStats.totalTemp += tempValue;
+                        dayStats.count += 1;
+
+                        return acc;
+                    }, {});
+
+                    // Calculate average temperature for each day
+                    for (const [date, stats] of Object.entries(dailyStats)) {
+                        stats.avgTemp = stats.totalTemp / stats.count;
+                    }
+
+                    cityTrends[city] = dailyStats;
                 } catch (error) {
                     console.error(`Error fetching data for city ${city}:`, error.message);
-                    cityTrends[city] = [];
+                    cityTrends[city] = {};
                 }
             }
 
@@ -41,9 +77,8 @@ const HistoricalTrends = () => {
             {cities.map(city => (
                 <div key={city}>
                     <h3>{city}</h3>
-                    {trends[city] && Array.isArray(trends[city]) && trends[city].length > 0 ? (
+                    {trends[city] && Object.keys(trends[city]).length > 0 ? (
                         <WeatherChart trends={trends[city]} city={city} />
-                        
                     ) : (
                         <p>No data available for {city}</p>
                     )}
