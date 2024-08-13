@@ -6,7 +6,8 @@ import WeatherSummary from './WeatherSummary';
 import Alert from './Alert';
 import HistoricalTrends from './HistoricalTrends';
 
-const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
+const cities = ['Bangalore', 'Kolkata'];
+// const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
 
 const WeatherMonitor = () => {
     const [weatherData, setWeatherData] = useState([]);
@@ -63,9 +64,8 @@ const WeatherMonitor = () => {
             <h1>Real-Time Weather Monitoring</h1>
             <WeatherSummary weatherData={weatherData} />
             {alerts.length > 0 && <Alert alerts={alerts} />}
-            {/* You can choose which city to show trends for by changing the city prop */}
-            <HistoricalTrends city="Delhi" />
-            {/* Add more HistoricalTrends components for other cities if needed */}
+            {/* Only render HistoricalTrends once */}
+            <HistoricalTrends />
         </div>
     );
 };

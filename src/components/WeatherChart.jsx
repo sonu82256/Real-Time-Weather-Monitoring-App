@@ -24,7 +24,6 @@ ChartJS.register(
 
 const WeatherChart = ({ trends, city }) => {
     const dates = Object.keys(trends);
-    console.log(trends)
     const data = {
         labels: dates,
         datasets: [
@@ -48,7 +47,14 @@ const WeatherChart = ({ trends, city }) => {
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,
                 fill: false,
-            }
+            },
+            // {
+                // label: `Temperature in ${city}`,
+                // data: dates.map(date => trends[date].temp),
+                // borderColor: 'rgba(75, 192, 192, 1)',
+                // borderWidth: 2,
+                // fill: false,
+            // }
         ],
     };
 
@@ -68,7 +74,7 @@ const WeatherChart = ({ trends, city }) => {
                 type: 'category', // Ensures that the x-axis is categorical
             },
             y: {
-                beginAtZero: true, // Adjust based on your data
+                beginAtZero: false, // Adjust based on your data
             },
         },
     };

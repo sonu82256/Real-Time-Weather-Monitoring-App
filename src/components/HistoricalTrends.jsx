@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import WeatherChart from './WeatherChart';
 
-const HistoricalTrends = () => {
+const HistoricalTrends = memo(() => {
     const [trends, setTrends] = useState({});
-    const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
-
+    // const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
+    const cities = ['Bangalore', 'Kolkata'];
     useEffect(() => {
         const fetchTrends = async () => {
             const cityTrends = {};
@@ -21,58 +21,56 @@ const HistoricalTrends = () => {
 
                     const snapshot = await getDocs(q);
                     const data = snapshot.docs.map(doc => doc.data());
-                    console.log(data); // Inspect the data
 
                     // Aggregate data by day
                     const dailyStats = data.reduce((acc, curr) => {
-                        const { date, temp } = curr;
-                        // Handle missing or invalid temp values
-                        console.log(date, temp)
-                        if (temp === undefined || temp === null || isNaN(Number(temp))) {
-                            console.warn(`Invalid or missing temperature value for date ${date}: ${temp}`);
+                        const { date, maxTemp, minTemp, avgTemp, temp } = curr;
+
+                        // Ensure all temperature fields are valid
+                        if (
+                            maxTemp === undefined || maxTemp === null || isNaN(Number(maxTemp)) ||
+                            minTemp === undefined || minTemp === null || isNaN(Number(minTemp)) ||
+                            avgTemp === undefined || avgTemp === null || isNaN(Number(avgTemp)) ||
+                            temp === undefined || temp === null || isNaN(Number(temp)) 
+                        ) {
+                            console.warn(`Invalid or missing temperature values for date ${date}`);
                             return acc; // Skip this entry
                         }
-                        
 
-                        const tempValue = Number(temp);
-
+                        // Check if this date already exists in the accumulator
                         if (!acc[date]) {
                             acc[date] = {
-                                maxTemp: -Infinity,
-                                minTemp: Infinity,
-                                totalTemp: 0,
-                                count: 0
+                                maxTemp: maxTemp,
+                                minTemp: minTemp,
+                                avgTemp: avgTemp,
+                                temp: temp
                             };
                         }
-                        const dayStats = acc[date];
-                        dayStats.maxTemp = Math.max(dayStats.maxTemp, tempValue);
-                        dayStats.minTemp = Math.min(dayStats.minTemp, tempValue);
-                        dayStats.totalTemp += tempValue;
-                        dayStats.count += 1;
 
                         return acc;
                     }, {});
-
-                    // Calculate average temperature for each day
-                    for (const [date, stats] of Object.entries(dailyStats)) {
-                        stats.avgTemp = stats.totalTemp / stats.count;
+                    
+                    // Only add unique data to cityTrends
+                    if (!cityTrends[city]) {
+                        cityTrends[city] = dailyStats;
                     }
 
-                    cityTrends[city] = dailyStats;
                 } catch (error) {
                     console.error(`Error fetching data for city ${city}:`, error.message);
                     cityTrends[city] = {};
                 }
             }
 
-            setTrends(cityTrends);
+            setTrends(cityTrends); // Set the aggregated data to state
         };
 
-        fetchTrends();
-    }, []);
+        fetchTrends(); // Fetch data on component mount
+
+    }, []); // Ensure useEffect only runs once when the component mounts
 
     return (
         <div>
+            <h1>Weather Monitoring Dashboard</h1>
             <h2>Historical Trends</h2>
             {cities.map(city => (
                 <div key={city}>
@@ -86,6 +84,6 @@ const HistoricalTrends = () => {
             ))}
         </div>
     );
-};
+});
 
 export default HistoricalTrends;
