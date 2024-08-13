@@ -5,7 +5,7 @@ import WeatherChart from './WeatherChart';
 
 const HistoricalTrends = memo(() => {
     const [trends, setTrends] = useState({});
-    const cities = ['Bangalore', 'Kolkata']; // Add or remove cities as needed
+    const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
 
     useEffect(() => {
         const fetchTrends = async () => {
@@ -39,26 +39,30 @@ const HistoricalTrends = memo(() => {
                         // Initialize date entry if it does not exist
                         if (!acc[date]) {
                             acc[date] = {
+                                totalMaxTemp: 0,
+                                totalMinTemp: 0,
                                 totalTemp: 0,
-                                count: 0,
-                                maxTemp: maxTemp,
-                                minTemp: minTemp
+                                count: 0
                             };
                         }
 
-                        // Aggregate temperature data
+                        // Accumulate temperature data
+                        acc[date].totalMaxTemp += maxTemp;
+                        acc[date].totalMinTemp += minTemp;
                         acc[date].totalTemp += temp;
                         acc[date].count += 1;
-                        acc[date].maxTemp = Math.max(acc[date].maxTemp, maxTemp);
-                        acc[date].minTemp = Math.min(acc[date].minTemp, minTemp);
 
                         return acc;
                     }, {});
 
-                    // Calculate average temperature for each date
+                    // Calculate average temperatures for each date
                     for (const date in dailyStats) {
                         const stats = dailyStats[date];
+                        stats.avgMaxTemp = stats.totalMaxTemp / stats.count;
+                        stats.avgMinTemp = stats.totalMinTemp / stats.count;
                         stats.avgTemp = stats.totalTemp / stats.count;
+                        delete stats.totalMaxTemp; // Remove totalMaxTemp from final stats
+                        delete stats.totalMinTemp; // Remove totalMinTemp from final stats
                         delete stats.totalTemp; // Remove totalTemp from final stats
                         delete stats.count; // Remove count from final stats
                     }
@@ -78,7 +82,6 @@ const HistoricalTrends = memo(() => {
         };
 
         fetchTrends(); // Fetch data on component mount
-
     }, []); // Ensure useEffect only runs once when the component mounts
 
     return (

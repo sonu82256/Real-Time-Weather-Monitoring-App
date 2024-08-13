@@ -24,37 +24,31 @@ ChartJS.register(
 
 const WeatherChart = ({ trends, city }) => {
     const dates = Object.keys(trends);
+    // console.log(trends)
     const data = {
         labels: dates,
         datasets: [
             {
                 label: `Avg Temperature in ${city}`,
-                data: dates.map(date => trends[date].maxTemp),
+                data: dates.map(date => trends[date].avgMaxTemp),
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 2,
                 fill: false,
             },
             {
                 label: `Min Temperature in ${city}`,
-                data: dates.map(date => trends[date].minTemp),
+                data: dates.map(date => trends[date].avgMinTemp),
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 2,
                 fill: false,
             },
             {
-                label: `temp in ${city}`,
+                label: `Average Temprature in ${city}`,
                 data: dates.map(date => trends[date].avgTemp),
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,
                 fill: false,
             },
-            // {
-                // label: `Temperature in ${city}`,
-                // data: dates.map(date => trends[date].temp),
-                // borderColor: 'rgba(75, 192, 192, 1)',
-                // borderWidth: 2,
-                // fill: false,
-            // }
         ],
     };
 

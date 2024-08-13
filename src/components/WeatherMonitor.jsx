@@ -6,30 +6,30 @@ import WeatherSummary from './WeatherSummary';
 import Alert from './Alert';
 import HistoricalTrends from './HistoricalTrends';
 
-const cities = ['Bangalore', 'Kolkata'];
-// const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
+// const cities = ['Bangalore', 'Kolkata'];
+const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
 
 const WeatherMonitor = () => {
     const [weatherData, setWeatherData] = useState([]);
     const [alerts, setAlerts] = useState([]);
 
-    // useEffect(() => {
-    //     const fetchWeatherData = async () => {
-    //         try {
-    //             const dataPromises = cities.map(city => getWeatherData(city));
-    //             const data = await Promise.all(dataPromises);
-    //             setWeatherData(data);
-    //             storeDailySummaries(data); 
-    //         } catch (error) {
-    //             console.error('Error fetching weather data:', error);
-    //         }
-    //     };
+    useEffect(() => {
+        const fetchWeatherData = async () => {
+            try {
+                const dataPromises = cities.map(city => getWeatherData(city));
+                const data = await Promise.all(dataPromises);
+                setWeatherData(data);
+                storeDailySummaries(data); 
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        };
 
-    //     fetchWeatherData();
-    //     const interval = setInterval(fetchWeatherData, 100 * 60 * 1000); 
+        fetchWeatherData();
+        const interval = setInterval(fetchWeatherData, 100 * 60 * 1000); 
 
-    //     return () => clearInterval(interval);
-    // }, []);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const userDefinedThreshold = 35;
