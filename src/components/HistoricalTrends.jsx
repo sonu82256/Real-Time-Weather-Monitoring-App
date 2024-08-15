@@ -21,6 +21,7 @@ const HistoricalTrends = memo(() => {
 
                     const snapshot = await getDocs(q);
                     const data = snapshot.docs.map(doc => doc.data());
+                    console.log(data)
 
                     // Aggregate data by day
                     const dailyStats = data.reduce((acc, curr) => {

@@ -24,7 +24,7 @@ ChartJS.register(
 
 const WeatherChart = ({ trends, city }) => {
     const dates = Object.keys(trends);
-    // console.log(trends)
+    console.log(trends)
     const data = {
         labels: dates,
         datasets: [

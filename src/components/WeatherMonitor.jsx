@@ -26,7 +26,7 @@ const WeatherMonitor = () => {
         };
 
         fetchWeatherData();
-        const interval = setInterval(fetchWeatherData, 100 * 60 * 1000); 
+        const interval = setInterval(fetchWeatherData, 10 * 60 * 1000); 
 
         return () => clearInterval(interval);
     }, []);
