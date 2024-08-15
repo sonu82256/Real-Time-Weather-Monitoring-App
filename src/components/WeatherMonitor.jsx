@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getWeatherData } from '../api/weather';
+import { getWeatherData } from '../api/Weather';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import WeatherCard from './WeatherCard';
