@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { getWeatherData } from '../api/weather';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import WeatherCard from './WeatherCard'; // Import the new WeatherCard component
+import WeatherCard from './WeatherCard';
 import Alert from './Alert';
 import HistoricalTrends from './HistoricalTrends';
 
-// const cities = ['Bangalore', 'Kolkata'];
 const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
 
 const WeatherMonitor = () => {
@@ -19,14 +18,14 @@ const WeatherMonitor = () => {
                 const dataPromises = cities.map(city => getWeatherData(city));
                 const data = await Promise.all(dataPromises);
                 setWeatherData(data);
-                storeDailySummaries(data); 
+                storeDailySummaries(data);
             } catch (error) {
                 console.error('Error fetching weather data:', error);
             }
         };
 
         fetchWeatherData();
-        const interval = setInterval(fetchWeatherData, 10 * 60 * 1000); 
+        const interval = setInterval(fetchWeatherData, 180 * 60 * 1000);
 
         return () => clearInterval(interval);
     }, []);
@@ -39,7 +38,6 @@ const WeatherMonitor = () => {
 
     const storeDailySummaries = async (data) => {
         const dailySummaries = calculateDailySummary(data);
-        console.log(data);
         try {
             const dailySummariesRef = collection(db, 'dailySummaries');
             await Promise.all(dailySummaries.map(summary => {
@@ -60,9 +58,11 @@ const WeatherMonitor = () => {
     };
 
     return (
-        <div className="p-6  max-h-screen">
-            <h1 className="text-4xl font-bold mb-6 text-center text-blue-600 " >Real-Time Weather Monitoring</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6  w-4/5 mx-auto" >
+        <div className="p-6 max-h-screen">
+            <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">
+                Real-Time Weather Monitoring
+            </h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-4/5 mx-auto">
                 {weatherData.map((cityData, index) => (
                     <WeatherCard 
                         key={index}
